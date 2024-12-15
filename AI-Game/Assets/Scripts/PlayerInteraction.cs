@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerInteraction : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class PlayerInteraction : MonoBehaviour
     public Transform raycastOrigin;
     public LayerMask npcLayer;
     public GameObject dialogUI;
+    public TextMeshProUGUI interactPrompt;
 
     private bool isLookingAtNPC = false;
     private GameObject currentNPC;
@@ -32,13 +34,24 @@ public class PlayerInteraction : MonoBehaviour
             {
                 isLookingAtNPC = true;
                 currentNPC = hit.collider.gameObject;
+                
                 // Optional: Display an "Interact" prompt here
+                if(interactPrompt != null) 
+                {
+                    interactPrompt.text = "Press E to Interact";
+                    interactPrompt.gameObject.SetActive(true);
+                } 
             }
         }
         else
         {
             isLookingAtNPC = false;
             currentNPC = null;
+
+            if (interactPrompt != null)
+            {
+                interactPrompt.gameObject.SetActive(false);
+            }
         }
     }
 
@@ -48,6 +61,11 @@ public class PlayerInteraction : MonoBehaviour
         if (dialogUI != null)
         {
             dialogUI.SetActive(!dialogUI.activeSelf);
+
+            if (dialogUI.activeSelf && interactPrompt != null)
+            {
+                interactPrompt.gameObject.SetActive(false);
+            }
         }
     }
 }
