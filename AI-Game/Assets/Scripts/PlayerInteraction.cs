@@ -34,13 +34,13 @@ public class PlayerInteraction : MonoBehaviour
             {
                 isLookingAtNPC = true;
                 currentNPC = hit.collider.gameObject;
-                
+
                 // Optional: Display an "Interact" prompt here
-                if(interactPrompt != null) 
+                if (interactPrompt != null && !dialogUI.activeSelf)
                 {
                     interactPrompt.text = "Press E to Interact";
                     interactPrompt.gameObject.SetActive(true);
-                } 
+                }
             }
         }
         else
@@ -60,11 +60,30 @@ public class PlayerInteraction : MonoBehaviour
         // Toggle dialog UI visibility
         if (dialogUI != null)
         {
-            dialogUI.SetActive(!dialogUI.activeSelf);
+            bool isDialogActive = !dialogUI.activeSelf;
+            dialogUI.SetActive(isDialogActive);
 
-            if (dialogUI.activeSelf && interactPrompt != null)
+            // Pause the game when dialog is active
+            if (isDialogActive)
             {
-                interactPrompt.gameObject.SetActive(false);
+                Time.timeScale = 0f; // Pause the game
+
+                // Show the cursor
+                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.visible = true;
+
+                if (interactPrompt != null)
+                {
+                    interactPrompt.gameObject.SetActive(false); // Hide the prompt
+                }
+            }
+            else
+            {
+                Time.timeScale = 1f; // Resume the game
+
+                // Hide the cursor
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
             }
         }
     }
